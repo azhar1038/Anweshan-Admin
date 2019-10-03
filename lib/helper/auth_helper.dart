@@ -13,6 +13,13 @@ class AuthHelper {
         if (realPassword == password) return true;
         return false;
       },
-    );
+    ).catchError((error){
+      throw AuthHelperException(cause: error);
+    });
   }
+}
+
+class AuthHelperException implements Exception{
+  String cause;
+  AuthHelperException({this.cause});
 }

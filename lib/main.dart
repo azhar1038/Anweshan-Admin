@@ -1,3 +1,4 @@
+import 'package:anweshan_admin/pages/dashboard.dart';
 import 'package:anweshan_admin/pages/sign_in.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: SignIn(),
+      home: Dashboard(),
     );
   }
 }

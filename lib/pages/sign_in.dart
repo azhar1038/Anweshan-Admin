@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:anweshan_admin/helper/auth_helper.dart';
 
+import 'dashboard.dart';
+
 class SignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,7 @@ class __SignInFormState extends State<_SignInForm> {
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -101,14 +103,14 @@ class __SignInFormState extends State<_SignInForm> {
                         _passwordController.text,
                       ).then((bool valid) {
                         if (valid) {
-                          // TODO: Go to Dashboard.
+                          Navigator.of(context).pushReplacement(MaterialPageRoute(
+                            builder: (context)=>Dashboard(),
+                          ),);
                         } else {
-                          Scaffold.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Incorrect email orpassword!'),
-                            ),
-                          );
+                          showSnackBar('Invalid Email or Password!');
                         }
+                      }).catchError((error) {
+                        showSnackBar('Server busy. Try again');
                       });
                     }
                   });
@@ -136,5 +138,13 @@ class __SignInFormState extends State<_SignInForm> {
       return 'Password cannot be empty';
     else if (s.trim().length < 3) return 'Password too short';
     return null;
+  }
+
+  void showSnackBar(String content) {
+    Scaffold.of(context).showSnackBar(
+      SnackBar(
+        content: Text(content),
+      ),
+    );
   }
 }
