@@ -14,10 +14,10 @@ class QuestionDisplay extends StatelessWidget {
     this.url,
   }) : assert(answer > 0 && answer < 5);
 
-  Widget _getImage(String url){
-    if(url == null || url.isEmpty){
+  Widget _getImage(String url) {
+    if (url == null || url.isEmpty) {
       return Container();
-    }else{
+    } else {
       return Image.network(url);
     }
   }
@@ -38,12 +38,11 @@ class QuestionDisplay extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(10),
-              alignment: Alignment.center,
-              child: _getImage(url),
-            ),
+          Container(
+            height: 100,
+            padding: EdgeInsets.all(10),
+            alignment: Alignment.center,
+            child: _getImage(url),
           ),
           Container(
             width: MediaQuery.of(context).size.width,
@@ -71,7 +70,6 @@ class QuestionDisplay extends StatelessWidget {
                     ),
                   ),
                 ),
-                
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   margin: EdgeInsets.all(8),
@@ -92,7 +90,6 @@ class QuestionDisplay extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   margin: EdgeInsets.all(8),
@@ -113,7 +110,6 @@ class QuestionDisplay extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 8),
                   margin: EdgeInsets.all(8),
