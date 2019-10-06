@@ -62,7 +62,7 @@ class __SignInFormState extends State<_SignInForm> {
                       ),
                       labelText: 'Email',
                     ),
-                    validator: _validateEmail,
+                    validator: AuthHelper.emailValidator,
                     autovalidate: _autovalidate,
                   ),
                   SizedBox(
@@ -77,7 +77,7 @@ class __SignInFormState extends State<_SignInForm> {
                       ),
                       labelText: 'Password',
                     ),
-                    validator: _validatePassword,
+                    validator: AuthHelper.passwordValidator,
                     autovalidate: _autovalidate,
                   ),
                 ],
@@ -121,23 +121,6 @@ class __SignInFormState extends State<_SignInForm> {
         ),
       ),
     );
-  }
-
-  String _validateEmail(String s) {
-    Pattern pattern =
-        r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
-    RegExp regex = RegExp(pattern);
-    if (s.isEmpty || !regex.hasMatch(s))
-      return 'Invalid email';
-    else
-      return null;
-  }
-
-  String _validatePassword(String s) {
-    if (s.isEmpty)
-      return 'Password cannot be empty';
-    else if (s.trim().length < 3) return 'Password too short';
-    return null;
   }
 
   void showSnackBar(String content) {
