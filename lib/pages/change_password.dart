@@ -16,69 +16,73 @@ class _ChangePasswordState extends State<ChangePassword> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  controller: _emailController,
-                  autovalidate: _autovalidate,
-                  validator: AuthHelper.emailValidator,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    labelText: 'Your Email',
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _currentPasswordController,
-                  autovalidate: _autovalidate,
-                  validator: AuthHelper.passwordValidator,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    labelText: 'Your Current Password',
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _newPasswordController,
-                  autovalidate: _autovalidate,
-                  validator: AuthHelper.passwordValidator,
-                  keyboardType: TextInputType.text,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    labelText: 'New Password',
-                  ),
-                ),
-              ],
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            SizedBox(
+              height: 20,
             ),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            error ?? '',
-            style: TextStyle(
-              color: Theme.of(context).errorColor,
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TextFormField(
+                    controller: _emailController,
+                    autovalidate: _autovalidate,
+                    validator: AuthHelper.emailValidator,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      labelText: 'Your Email',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _currentPasswordController,
+                    autovalidate: _autovalidate,
+                    validator: AuthHelper.passwordValidator,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      labelText: 'Your Current Password',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    controller: _newPasswordController,
+                    autovalidate: _autovalidate,
+                    validator: AuthHelper.passwordValidator,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      labelText: 'New Password',
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-          Expanded(
-            child: Container(
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              error ?? '',
+              style: TextStyle(
+                color: Theme.of(context).errorColor,
+              ),
+            ),
+            SizedBox(height: 10),
+            Container(
               padding: EdgeInsets.all(10),
               alignment: Alignment.bottomCenter,
               child: RaisedButton(
@@ -90,38 +94,39 @@ class _ChangePasswordState extends State<ChangePassword> {
                   ),
                 ),
                 child: Text('Change Password'),
-                onPressed: () {
-                  setState(() async {
-                    _autovalidate = true;
-                    if (_formKey.currentState.validate()) {
-                      showWaitDialog();
-                      bool valid = await AuthHelper.checkAdmin(
+                onPressed: () async {
+                  if (_formKey.currentState.validate()) {
+                    showWaitDialog();
+                    bool valid = await AuthHelper.checkAdmin(
+                      _emailController.text,
+                      _currentPasswordController.text,
+                    );
+                    if (valid) {
+                      AuthHelper.changePassword(
                         _emailController.text,
-                        _currentPasswordController.text,
-                      );
-                      if (valid) {
-                        AuthHelper.changePassword(
-                          _emailController.text,
-                          _newPasswordController.text,
-                        ).then((_){
-                          Navigator.of(context).pop();
-                          setState(() {
-                            error = null;
-                          });
-                        });
-                      } else {
+                        _newPasswordController.text,
+                      ).then((_) {
                         Navigator.of(context).pop();
-                        setState(() {
-                          error = "Email or Current Password is incorrect";
-                        });
-                      }
+                        error = null;
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Done'),
+                          ),
+                        );
+                      });
+                    } else {
+                      Navigator.of(context).pop();
+                      error = "Email or Current Password is incorrect";
                     }
+                  }
+                  setState(() {
+                    _autovalidate = true;
                   });
                 },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
