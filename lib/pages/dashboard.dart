@@ -1,7 +1,8 @@
+import 'package:anweshan_admin/pages/change_message.dart';
+import 'package:anweshan_admin/pages/notify.dart';
 import 'package:flutter/material.dart';
 import 'package:anweshan_admin/pages/change_password.dart';
 import 'package:anweshan_admin/pages/edit_quiz.dart';
-import 'package:anweshan_admin/pages/messaging.dart';
 import 'package:anweshan_admin/pages/new_quiz.dart';
 import 'package:anweshan_admin/pages/register.dart';
 import 'package:anweshan_admin/pages/review_quiz.dart';
@@ -25,7 +26,8 @@ class _DashboardState extends State<Dashboard> {
     'New Contestant',
     'Score',
     'Gems',
-    'Broadcast',
+    'Change Message',
+    'Notification',
   ];
   int _currentPage = 0;
   PageController _pageController;
@@ -162,11 +164,21 @@ class _DashboardState extends State<Dashboard> {
                       color: Color(0xffaaaaaa),
                     ),
                     ListTile(
-                      title: Text('Broadcast'),
+                      title: Text('Change Message'),
                       onTap: () {
                         Navigator.of(context).pop();
                         setState(() {
                           _currentPage = 9;
+                          _pageController.jumpToPage(_currentPage);
+                        });
+                      },
+                    ),
+                    ListTile(
+                      title: Text('Notify Users'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          _currentPage = 10;
                           _pageController.jumpToPage(_currentPage);
                         });
                       },
@@ -192,7 +204,8 @@ class _DashboardState extends State<Dashboard> {
           Register(),
           TopScore(),
           TopGems(),
-          Messaging(),
+          ChangeMessage(),
+          Notify(),
         ],
       ),
     );
