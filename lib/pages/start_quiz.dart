@@ -72,18 +72,18 @@ class _QuizCount extends StatefulWidget {
 
 class __QuizCountState extends State<_QuizCount> {
   bool _canPop = false;
-  ValueNotifier<int> _questionNumber = ValueNotifier<int>(0);
+  ValueNotifier<int> _questionNumber = ValueNotifier<int>(-1);
   Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 15), (Timer timer) {
+    _timer = Timer.periodic(Duration(seconds: 18), (Timer timer) {
       if (_questionNumber.value == 11) {
         Firestore.instance.document('quiz_info/question').updateData(
-          {'current': 0},
+          {'current': -1},
         ).then((_) {
-          _questionNumber.value = 0;
+          _questionNumber.value = -1;
           timer.cancel();
           _canPop = true;
         });
@@ -129,7 +129,9 @@ class __QuizCountState extends State<_QuizCount> {
                 ),
               ),
               Text(
-                'Don\'t use this device now. Leave it as it is.',
+                _canPop
+                    ? 'You can exit now'
+                    : 'Don\'t use this device now. Leave it as it is.',
                 style: TextStyle(
                   color: Colors.red,
                 ),
