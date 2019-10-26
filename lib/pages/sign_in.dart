@@ -71,6 +71,7 @@ class __SignInFormState extends State<_SignInForm> {
                   TextFormField(
                     controller: _passwordController,
                     keyboardType: TextInputType.text,
+                    obscureText: true,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10.0),
@@ -98,10 +99,12 @@ class __SignInFormState extends State<_SignInForm> {
                   _autovalidate = true;
                   setState(() {
                     if (_formKey.currentState.validate()) {
+                      showWaitDialog();
                       AuthHelper.checkAdmin(
                         _emailController.text,
                         _passwordController.text,
                       ).then((bool valid) {
+                        Navigator.of(context).pop();
                         if (valid) {
                           Navigator.of(context).pushReplacement(MaterialPageRoute(
                             builder: (context)=>Dashboard(),
@@ -110,7 +113,8 @@ class __SignInFormState extends State<_SignInForm> {
                           showSnackBar('Invalid Email or Password!');
                         }
                       }).catchError((error) {
-                        showSnackBar('Server busy. Try again');
+                        Navigator.of(context).pop();
+                        showSnackBar('Please check internet connection.');
                       });
                     }
                   });
@@ -120,6 +124,24 @@ class __SignInFormState extends State<_SignInForm> {
           ],
         ),
       ),
+    );
+  }
+
+  void showWaitDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: SizedBox(
+              height: 50.0,
+              width: 50.0,
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -52,13 +52,37 @@ class StartQuiz extends StatelessWidget {
             FlatButton(
               child: Text('Yes'),
               textColor: Colors.green,
-              onPressed: () => Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => _QuizCount(),
-                ),
-              ),
+              onPressed: () {
+                showWaitDialog(context);
+                Firestore.instance.document('quiz_info/question').get().then((snapshot) {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => _QuizCount(initialCount: snapshot.data['current']),
+                    ),
+                  );
+                });
+              },
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void showWaitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
+            child: SizedBox(
+              height: 50.0,
+              width: 50.0,
+              child: CircularProgressIndicator(),
+            ),
+          ),
         );
       },
     );
@@ -66,34 +90,43 @@ class StartQuiz extends StatelessWidget {
 }
 
 class _QuizCount extends StatefulWidget {
+  final int initialCount;
+  
+  _QuizCount({
+    @required this.initialCount,
+  });
+
   @override
   __QuizCountState createState() => __QuizCountState();
 }
 
 class __QuizCountState extends State<_QuizCount> {
   bool _canPop = false;
-  ValueNotifier<int> _questionNumber = ValueNotifier<int>(-1);
+  ValueNotifier<int> _questionNumber = ValueNotifier<int>(0);
   Timer _timer;
 
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(seconds: 18), (Timer timer) {
-      if (_questionNumber.value == 11) {
-        Firestore.instance.document('quiz_info/question').updateData(
-          {'current': -1},
-        ).then((_) {
-          _questionNumber.value = -1;
-          timer.cancel();
-          _canPop = true;
-        });
-      } else {
-        Firestore.instance
-            .document('quiz_info/question')
-            .updateData({'current': FieldValue.increment(1)}).then((_) {
-          _questionNumber.value++;
-        });
-      }
+    Firestore.instance.document('quiz_info/question').updateData({'current':widget.initialCount+1}).then((_) {
+      _questionNumber.value = widget.initialCount+1;
+      _timer = Timer.periodic(Duration(seconds: 18), (Timer timer) {
+        if (_questionNumber.value == 11) {
+          Firestore.instance.document('quiz_info/question').updateData(
+            {'current': -1},
+          ).then((_) {
+            _questionNumber.value = -1;
+            timer.cancel();
+            _canPop = true;
+          });
+        } else {
+          Firestore.instance
+              .document('quiz_info/question')
+              .updateData({'current': FieldValue.increment(1)}).then((_) {
+            _questionNumber.value++;
+          });
+        }
+      });
     });
   }
 
@@ -129,9 +162,7 @@ class __QuizCountState extends State<_QuizCount> {
                 ),
               ),
               Text(
-                _canPop
-                    ? 'You can exit now'
-                    : 'Don\'t use this device now. Leave it as it is.',
+                'Don\'t use this device now. Leave it as it is.',
                 style: TextStyle(
                   color: Colors.red,
                 ),
